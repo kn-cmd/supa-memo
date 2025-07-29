@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>公開メモ帳 (htmx版)</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+    <script src="https://unpkg.com/htmx.org@1.9.10" defer></script>
+</head>
+<body>
+  <main class="container">
+    <h1>公開メモ帳 (htmx版)</h1>
+    
+    <!-- ▼ hx-postのURLをあなたのFunctionのURLに書き換えてください -->
+    <form
+      hx-post="https://ytchegmwxfnwcmslbxlt.supabase.co/functions/v1/create-memo"
+      hx-target="#memos-container"
+      hx-swap="afterbegin"
+      hx-headers='{
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0Y2hlZ213eGZud2Ntc2xieGx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2MDYxMDYsImV4cCI6MjA2OTE4MjEwNn0._vKapR3j_tCz0tkQ2DbkWExGKkq6ej0NzhE9BdgOeuc",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0Y2hlZ213eGZud2Ntc2xieGx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2MDYxMDYsImV4cCI6MjA2OTE4MjEwNn0._vKapR3j_tCz0tkQ2DbkWExGKkq6ej0NzhE9BdgOeuc"
+      }'
+    >
+      <textarea name="content" required placeholder="メモを入力..."></textarea>
+      <button type="submit">投稿する</button>
+    </form>
+
+    <!-- ▼ hx-getのURLをあなたのFunctionのURLに書き換えてください -->
+    <div
+      id="memos-container"
+      hx-get="https://ytchegmwxfnwcmslbxlt.supabase.co/functions/v1/get-memos"
+      hx-trigger="load"
+      hx-headers='{
+        "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0Y2hlZ213eGZud2Ntc2xieGx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2MDYxMDYsImV4cCI6MjA2OTE4MjEwNn0._vKapR3j_tCz0tkQ2DbkWExGKkq6ej0NzhE9BdgOeuc",
+        "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl0Y2hlZ213eGZud2Ntc2xieGx0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM2MDYxMDYsImV4cCI6MjA2OTE4MjEwNn0._vKapR3j_tCz0tkQ2DbkWExGKkq6ej0NzhE9BdgOeuc"
+      }'
+    >
+      <p>読み込み中...</p>
+    </div>
+  </main>
+</body>
+</html>
