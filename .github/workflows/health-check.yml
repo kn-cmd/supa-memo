@@ -1,0 +1,36 @@
+name: Supabase Health Check
+
+on:
+  schedule:
+    # 毎日 日本時間 09:00 (UTC 00:00)
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write 
+
+jobs:
+  main-process:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Supabase アクセス
+      - name: Ping Edge Function
+        run: |
+          curl -X POST 'https://${{ secrets.SUPABASE_PROJECT_REF }}.supabase.co/functions/v1/health-check' \
+          -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}" \
+          -H "Content-Type: application/json" \
+          --fail
+
+      # 定期実行永続化
+      - name: Keep Workflow Active
+        if: always() 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          REF_PATH="${GITHUB_WORKFLOW_REF%@*}"
+          FILENAME="${REF_PATH##*/}"
+          echo "Enabling self workflow: $FILENAME"
+          gh workflow enable "$FILENAME"
