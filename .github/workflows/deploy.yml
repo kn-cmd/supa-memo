@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages
+
+on:
+  # mainブランチにpushされたら実行
+  push:
+    branches: ["main"]
+
+  # Actionsタブから手動実行も許可
+  workflow_dispatch:
+
+# GitHub Pagesへのデプロイに必要な権限設定
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 重複実行の制御
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Environment設定
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    runs-on: ubuntu-latest
+    
+    steps:
+      # 1. ソースコードの取得
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. 環境変数の埋め込み処理
+      - name: Inject Environment Variables
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+          APP_VERSION: ${{ secrets.APP_VERSION }}
+        run: |
+          # SUPABASE_PROJECT_REFの置換処理
+          find ./public -type f -exec sed -i "s|\${SUPABASE_PROJECT_REF}|$SUPABASE_PROJECT_REF|g" {} +
+
+          # SUPABASE_ANON_KEYの置換処理
+          find ./public -type f -exec sed -i "s|\${SUPABASE_ANON_KEY}|$SUPABASE_ANON_KEY|g" {} +
+
+      # 3. Pages のセットアップ
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      # 4. 公開ファイルのパッケージ化
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './public'
+
+      # 5. デプロイ実行
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
